@@ -31,9 +31,9 @@ I’m currently expanding my skills in **Rust**.
 ---
 
 ##  Contact Me  
-- LinkedIn: [Your LinkedIn URL here]  
-- Email: [your.email@example.com]  
-- Portfolio: [your-portfolio-website.com]  
+- LinkedIn: [https://www.linkedin.com/in/pourya-mohamadi/]  
+- Email: [fresh.pourya@gmail.com]  
+
 
 ---
 ---
@@ -66,6 +66,6 @@ I’m currently expanding my skills in **Rust**.
 
 
 ##  راه‌های ارتباطی  
-- لینکدین: [آدرس لینکدین شما]  
-- ایمیل: [ایمیل شما]  
-- پورتفولیو: [وب‌سایت شخصی شما]  
+- لینکدین: [https://www.linkedin.com/in/pourya-mohamadi/]  
+- ایمیل: [fresh.pourya@gmail.com]  
+ 
