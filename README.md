@@ -1,34 +1,62 @@
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white) ![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) ![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white) ![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) ![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white) ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 
-# Pourya Mohamadi — Python Developer (Backend & Systems)
+# Pourya Mohamadi — Python Backend & Production Systems Engineer
 
-Self-taught Python developer. I design, build, deploy, and operate production systems end to end: multi-brand Django e-commerce platforms serving real customers, a risk-first cryptocurrency trading bot, and packaged Python SDKs. Currently focused on trading-system architecture, automated testing, and security engineering.
+Self-taught Python developer. I don't just write application code — I build, deploy, operate, and maintain production systems that serve real customers and real revenue: multi-brand Django e-commerce and service platforms, a risk-first cryptocurrency trading bot, and packaged Python SDKs. My day-to-day covers the full path from model design to Dockerized production deployment on AWS and Linux servers, plus the operational work that keeps those systems alive.
 
 ---
 
-## What I build
+## Major production projects
 
-### Trading systems (Python · 2026)
-Author of an adaptive trading bot for the Bitpin exchange (~24k LOC, ~100 modules):
+### 1. Lidoma Home Services — HVAC service platform (production)
+Django 5 platform running the real business of an HVAC company in Winnipeg (lidomahomeservices.ca): booking and order workflows, staff area, content, and automation — operated end to end in Dockerized production.
+
+- **Production stack:** Docker Compose with 8 services — nginx (TLS termination, 444 catch-all servers, ACME automation via certbot/dns-cloudflare), gunicorn with 5 gevent workers and max-request recycling, PostgreSQL 13, Redis, RabbitMQ, Celery worker + beat, and dedicated certbot request/renew containers with `unless-stopped` policies.
+- **Background & automation:** Celery pipelines for transactional emails, Google Reviews fetching with Redis caching, and scheduled LLM blog writing (OpenAI, structured prompts, JSON parsing, similarity-based dedup, automated Pexels image sourcing).
+- **Integrations:** Google OAuth sign-in, Google Reviews & Cloud Storage (nightly `pg_dump` backups), SMS.ir notifications, Instagram posting automation, Iranian bank payment gateways (az-iranian-bank-gateways, Zibal).
+- **Django depth:** custom email-based user model with custom manager, social-auth pipeline customization, tagged blog with view-ranking in Redis, sitemaps and SEO for all content apps.
+- **Operations:** nightly database backups, log management, container orchestration, and troubleshooting on the live Linux server.
+
+### 2. Fapo Shop — multi-brand e-commerce platform (production)
+A full Django e-commerce system running real stores (several generations, 2024–2026): product catalog with variants/colors, session carts, orders, coupons, PDF invoicing, and a staff area with its own dashboards.
+
+- **Production stack:** Docker Compose — nginx + TLS via certbot, gunicorn (5 gevent workers), PostgreSQL, Redis (django-redis caching), RabbitMQ as Celery broker, separate celery_worker and celery_beat services.
+- **Payments:** Zibal gateway integration (request/verify), Torob BNPL flow with JWT auth and full verify/settle/revert lifecycle, bank gateway package, order confirmation SMS via SMS.ir (OTP + status templates).
+- **Shipping:** PostEx API integration for courier rates and destination lookup.
+- **Ops tooling:** management commands for admin bootstrap and address/city data seeding, product availability updates, order/task pipelines, and admin-facing order management.
+
+### 3. Winnipeg Furnace — HVAC services site (production, AWS)
+Django platform for a furnace/duct services business in Winnipeg (winni-furnace.ca) — my deepest AWS-integrated deployment.
+
+- **AWS services, verified in the code:** **RDS PostgreSQL** (dedicated DB instance), **S3** media/file storage via django-storages + boto3 (S3Boto3Storage, bucket in ca-central-1, presigned URLs), and **Amazon SES** transactional email (django-ses backend, email-smtp endpoint, ca-central-1) — including bulk mail features built directly on boto3 (presigned S3 asset URLs, email-to-all-users tooling).
+- **Deployment:** Dockerized (Python 3.11 Alpine image, entrypoint with migrate + collectstatic), uWSGI application server, gunicorn as an alternate WSGI option, whitenoise static compression, and a settings structure separated for production.
+- **Domain features:** service catalog (duct cleaning, furnace installation/repair/cleaning), quotes and offers, custom user accounts, password-reset email flows, service rating/scoring.
+
+---
+
+## Production & DevOps experience
+
+Running these platforms has made deployment and operations a core part of my work, not an afterthought:
+
+- **Docker in production:** multi-service Docker Compose stacks (nginx, gunicorn/uWSGI, PostgreSQL, Redis, RabbitMQ, Celery worker + beat, certbot TLS automation) with restart policies, resource limits, internal-only networks, and named volumes.
+- **AWS:** production deployments backed by RDS, S3 (django-storages/boto3), and SES, alongside S3-compatible object storage (Google Cloud Storage) for backups in other projects.
+- **Linux server administration:** hands-on operation of production Linux servers — services, logs, networking, permissions, processes, databases, and troubleshooting live incidents.
+- **Web serving & TLS:** nginx reverse-proxy configs (upstreams, keepalive, gzip, catch-all 444 handling, ACME challenge routing) and automated Let's Encrypt certificate lifecycle (including DNS-challenge automation).
+- **Data & caching infrastructure:** PostgreSQL administration and migrations (Alembic in the trading bot), Redis for caching and ranking, RabbitMQ message brokering, scheduled jobs via django_celery_beat.
+- **Operational habits:** environment-based secrets (`.env` + pydantic-settings / python-decouple with `.env.example` in every repo), pinned dependencies, scheduled database backups to object storage.
+
+---
+
+## Trading systems (Python, 2026)
+
+Author of an adaptive trading bot for the Bitpin exchange (~24k LOC, ~100 modules) — my strongest demonstration of architecture, risk engineering, and systems design:
 
 - **Layered architecture** — exchange adapters normalize REST payloads into frozen domain dataclasses; strategy, risk, persistence, and execution never touch provider JSON directly.
-- **Explainable strategy engine** — deterministic multi-timeframe signals (EMA trend, MACD momentum, ATR volatility, volume filters) that carry a score, confidence, regime, and human-readable reasons for every component.
+- **Explainable strategy engine** — deterministic multi-timeframe signals (EMA trend, MACD momentum, ATR volatility, volume filters) carrying score, confidence, regime, and human-readable reasons per component.
 - **Risk engine** — daily/monthly drawdown kill switches persisted to PostgreSQL so restarts cannot reset them; `Decimal` money math; hard blockers that always override signals.
-- **Exchange client** — HMAC-signed auth with managed token lifecycle, per-endpoint rate limiting, circuit breaker, and order execution gated off by default (simulation-first; live requires explicit config + admin approval).
-- **Tooling around it** — backtesting with walk-forward splits, feature/label dataset pipeline for learning from past trades, and a read-only FastAPI + Jinja2 dashboard.
+- **Exchange client** — HMAC-signed auth with managed token lifecycle, per-endpoint rate limiting, circuit breaker, order execution gated off by default (simulation-first; live requires explicit config + admin approval).
+- **Tooling around it** — backtesting with walk-forward splits, a feature/label pipeline for learning from past trades, and a read-only FastAPI + Jinja2 dashboard.
 - **Tested** — 369 pytest tests across 37 files (fakes, monkeypatching, DB-backed fixtures).
-
-### Production web platforms (Django · 2023–2026)
-Built and operate real revenue-generating platforms as a solo developer:
-
-- **E-commerce across multiple brands** — catalogs, session carts with variant/color handling, orders, coupons/discount codes, invoicing (PDF), and admin tooling.
-- **Service-business platform (Lidoma HVAC)** — booking/order flow, staff area, custom email-based user model, sitemaps/SEO, and Celery pipelines for transactional email, nightly `pg_dump` backups to Google Cloud Storage, and Google Reviews fetching with Redis caching.
-- **LLM content pipeline** — scheduled OpenAI-driven blog writing with structured prompts, JSON response parsing, similarity-based dedup against existing posts, and automated Pexels image sourcing.
-- **Real-world integrations** — Iranian payment gateways (Zibal, bank gateway package, Torob BNPL flow with verify/settle/revert), SMS.ir notifications, Instagram posting automation, Google OAuth sign-in, PostEx shipping rates.
-
-### Packaged Python SDKs
-- **[pexels-python](https://github.com/Stink-Po/pexels-python)** — a typed Pexels API wrapper: Pydantic input validation on every call, response analyzer, hatchling packaging with src layout, and its own test suite.
-- **[boxoffice_api](https://github.com/Stink-Po/boxoffice_api)** — Box Office Mojo data library: requests + BeautifulSoup scraping into pandas DataFrames with thread-pool concurrency, packaged for PyPI via a GitHub Actions release workflow.
 
 ---
 
@@ -37,17 +65,17 @@ Built and operate real revenue-generating platforms as a solo developer:
 | Area | What I actually use |
 |---|---|
 | **Languages** | Python (primary), JavaScript, HTML/CSS/SCSS |
-| **Web frameworks** | Django 5 (custom user models/managers, CMS/blog, carts, orders, admin), FastAPI (app factory, routers, Jinja2 dashboard) |
-| **Data & ORM** | PostgreSQL, SQLAlchemy 2 + Alembic migrations, Django ORM, Redis, RabbitMQ |
+| **Web frameworks** | Django 5 (custom user models/managers, e-commerce, CMS/blog, admin), FastAPI (app factory, routers, Jinja2 dashboard) |
+| **Data & ORM** | PostgreSQL (incl. AWS RDS), SQLAlchemy 2 + Alembic, Django ORM, Redis, RabbitMQ |
 | **Async & jobs** | Celery workers + django_celery_beat schedules |
-| **DevOps & deploy** | Docker Compose production stacks (nginx TLS via certbot, gunicorn gevent workers, resource limits), Linux VPS administration, Google Cloud Storage |
+| **Cloud & DevOps** | AWS (RDS, S3, SES) · Docker Compose production stacks · nginx + certbot TLS · Linux server administration (services, logs, networking, permissions, troubleshooting) |
 | **Testing** | pytest at scale in the trading bot; test suites in published packages |
-| **Integrations** | Payment gateways (Zibal / bank gateways / Torob), SMS.ir, Instagram API, Google OAuth/Reviews/Storage, OpenAI API, shipping APIs |
+| **Integrations** | Payment gateways (Zibal / bank gateways / Torob BNPL), SMS.ir, Instagram API, Google (OAuth, Reviews, Cloud Storage), Amazon SES, OpenAI API, PostEx shipping |
 | **Trading domain** | Exchange REST/HMAC auth, rate limiting, order lifecycle, drawdown risk controls, backtesting, feature/label engineering |
 
 ## How I work
 
-- Secrets live in environment config only (`.env` + pydantic-settings / python-decouple); every repo ships a `.env.example`; dependencies pinned.
+- Secrets live in environment config only; every repo ships a `.env.example`; dependencies are pinned.
 - Safety-first defaults in anything touching money: paper/simulation mode default, master kill switch, persistent drawdown halts, `Decimal` for money, positions recorded only after verified fills.
 - Explainability as a feature: trading signals and risk decisions carry their reasons; dashboards are read-only by default.
 - Domain isolation: provider-specific formats are normalized at the boundary and never leak inward.
@@ -62,16 +90,16 @@ Built and operate real revenue-generating platforms as a solo developer:
 
 - **2022** — first Python programs: CLI tools, translators, small automation.
 - **2023** — algorithms and games (minimax tic-tac-toe AI, pygame), first Django applications.
-- **2023–2024** — multi-brand Django e-commerce in production: payments, shipping, SMS, coupons.
+- **2023–2024** — first production AWS deployment (Winnipeg Furnace: RDS + S3 + SES) and multi-brand Django e-commerce in production.
 - **2025–2026** — production platforms with Celery/LLM/Instagram pipelines, published Python packages, and a risk-first trading system with layered architecture, persistent risk controls, and a real test suite.
 
-## Selected public repositories
+## Smaller projects & libraries
 
-- [pexels-python](https://github.com/Stink-Po/pexels-python) — Pydantic-validated Pexels API SDK
-- [boxoffice_api](https://github.com/Stink-Po/boxoffice_api) — box office data scraper library
-- [tictoctoi_with_AI](https://github.com/Stink-Po/tictoctoi_with_AI) — tic-tac-toe with minimax AI
+- [pexels-python](https://github.com/Stink-Po/pexels-python) — typed Pexels API SDK: Pydantic validation on every call, hatchling packaging, own test suite.
+- [boxoffice_api](https://github.com/Stink-Po/boxoffice_api) — box office data library: BeautifulSoup scraping into pandas DataFrames, thread-pool concurrency, PyPI release via GitHub Actions.
+- [tictoctoi_with_AI](https://github.com/Stink-Po/tictoctoi_with_AI) — tic-tac-toe with a minimax AI.
 
-*(Production platforms and the trading bot live in private repositories.)*
+*(The production platforms and the trading bot live in private repositories.)*
 
 ## Contact
 
@@ -82,35 +110,63 @@ Built and operate real revenue-generating platforms as a solo developer:
 
 ---
 
-# پوریا محمدی — توسعه‌دهنده پایتون (بک‌اند و سیستم‌ها)
+# پوریا محمدی — مهندس بک‌اند پایتون و سیستم‌های پروداکشن
 
-توسعه‌دهنده پایتون خودآموخته. طراحی، پیاده‌سازی، دیپلوی و نگه‌داری سیستم‌های پروداکشن را به‌صورت کامل انجام می‌دهم: پلتفرم‌های فروشگاهی جنگو برای چند برند واقعی، ربات معامله‌گری ارز دیجیتال با رویکرد «اول ایمنی»، و کتابخانه‌های پایتون بسته‌بندی‌شده. تمرکز فعلی: معماری سیستم‌های معامله‌گری، تست خودکار، و مهندسی امنیت.
+توسعه‌دهنده پایتون خودآموخته. کارم فقط نوشتن کد اپلیکیشن نیست — سیستم‌های پروداکشنی را که مشتری و درآمد واقعی دارند می‌سازم، دیپلوی می‌کنم، راه‌اندازی و نگه‌داری می‌کنم: پلتفرم‌های فروشگاهی و خدماتی جنگو برای چند برند، ربات معامله‌گری ارز دیجیتال با رویکرد «اول ایمنی»، و کتابخانه‌های پایتون بسته‌بندی‌شده. کار روزانه من از طراحی مدل تا دیپلوی Docker شده روی AWS و سرورهای لینوکس و عملیاتی که این سیستم‌ها را زنده نگه می‌دارد را پوشش می‌دهد.
 
 ---
 
-## چه چیزی می‌سازم
+## پروژه‌های اصلی پروداکشن
 
-### سیستم‌های معامله‌گری (پایتون · ۲۰۲۶)
-نویسنده ربات معامله‌گری تطبیقی برای صرافی بیت‌پین (~۲۴ هزار خط کد، ~۱۰۰ ماژول):
+### ۱. Lidoma Home Services — پلتفرم خدمات HVAC (پروداکشن)
+پلتفرم Django 5 در حال اجرای کسب‌وکار واقعی یک شرکت تأسیسات در وینیپگ (lidomahomeservices.ca): فرآیند رزرو و سفارش، پنل کارکنان، محتوا و اتوماسیون — به‌صورت کامل در پروداکشن Docker شده اداره می‌شود.
 
-- **معماری لایه‌ای** — آداپترهای صرافی پاسخ‌های REST را به دیتاکلاس‌های تغییرناپذیر (frozen) نرمال‌سازی می‌کنند؛ لایه‌های استراتژی، ریسک، persistence و اجرا هرگز با JSON اختصاصی صرافی سروکار ندارند.
-- **موتور استراتژی قابل توضیح** — سیگنال‌های قطعی چند‌تایم‌فریمی (روند EMA، مومنتوم MACD، نوسان ATR، فیلتر حجم) که برای هر مؤلفه امتیاز، اطمینان، رژیم بازار و دلیل قابل‌خواندن ارائه می‌دهند.
-- **موتور ریسک** — کلیدهای توقف (kill switch) افت روزانه/ماهانه که در PostgreSQL ذخیره می‌شوند تا ری‌استارت نتواند آن‌ها را ریست کند؛ محاسبات مالی با `Decimal`؛ بلاکرهای سخت که همیشه بر سیگنال اولویت دارند.
+- **استک پروداکشن:** Docker Compose با ۸ سرویس — nginx (پایان TLS، سرورهای catch-all با کد ۴۴۴، اتوماسیون ACME با certbot/dns-cloudflare)، گورنیکورن با ۵ ورکر gevent و بازیافت خودکار پردازش‌ها، PostgreSQL 13، Redis، RabbitMQ، کارگر و زمان‌بند Celery، و کانتینرهای جداگانه درخواست/تمدید گواهی certbot با سیاست `unless-stopped`.
+- **کارهای پس‌زمینه و اتوماسیون:** خطوط Celery برای ایمیل‌های تراکنشی، دریافت نظرات گوگل با کش Redis، و نوشتن خودکار وبلاگ با LLM (OpenAI، پرامپت ساختاریافته، پارس JSON، حذف تکرار بر اساس شباهت، تأمین خودکار تصویر از Pexels).
+- **یکپارچه‌سازی‌ها:** ورود با گوگل OAuth، نظرات گوگل و Google Cloud Storage (بکاپ شبانه `pg_dump`)، نوتیفیکیشن SMS.ir، اتوماسیون اینستاگرام، درگاه‌های پرداخت بانکی ایرانی (az-iranian-bank-gateways، زیبال).
+- **عمق جنگو:** مدل کاربر سفارشی مبتنی بر ایمیل با منیجر سفارشی، سفارشی‌سازی pipeline ی social-auth، وبلاگ تگ‌دار با رتبه‌بندی بازدید در Redis، sitemap و سئو برای همه اپ‌های محتوایی.
+- **عملیات:** بکاپ شبانه دیتابیس، مدیریت لاگ، ارکستراسیون کانتینرها، و عیب‌یابی روی سرور لینوکس واقعی.
+
+### ۲. Fapo Shop — پلتفرم فروشگاهی چندبرندی (پروداکشن)
+سیستم کامل فروشگاهی جنگو در حال اجرای فروشگاه‌های واقعی (چند نسل، ۲۰۲۴–۲۰۲۶): کاتالوگ محصولات با رنگ/وارینت، سبد خرید سشنی، سفارش‌ها، کد تخفیف، فاکتور PDF، و پنل کارکنان با داشبورد اختصاصی.
+
+- **استک پروداکشن:** Docker Compose — nginx + TLS با certbot، گورنیکورن (۵ ورکر gevent)، PostgreSQL، Redis (کش django-redis)، RabbitMQ به‌عنوان بروکر Celery، و سرویس‌های جداگانه celery_worker و celery_beat.
+- **پرداخت:** یکپارچه‌سازی درگاه زیبال (request/verify)، خرید اعتباری ترب با احراز هویت JWT و چرخه کامل verify/settle/revert، پکیج درگاه بانکی، پیامک تأیید سفارش با SMS.ir (OTP و قالب‌های وضعیت).
+- **ارسال کالا:** یکپارچه‌سازی API پست (PostEx) برای نرخ پیک و یافتن مقصد.
+- **ابزارهای عملیاتی:** management command های بوت‌استرپ ادمین و seed داده شهر/آدرس، به‌روزرسانی موجودی محصولات، pipeline های سفارش/تسک، و مدیریت سفارش در ادمین.
+
+### ۳. Winnipeg Furnace — سایت خدمات تأسیسات (پروداکشن روی AWS)
+پلتفرم جنگو برای کسب‌وکار خدمات بخاری/کانال‌کشی در وینیپگ (winni-furnace.ca) — عمیق‌ترین دیپلوی AWS من.
+
+- **سرویس‌های AWS، تأییدشده در کد:** **RDS PostgreSQL** (اینستنس اختصاصی دیتابیس)، **S3** برای ذخیره فایل/مدیا با django-storages + boto3 (S3Boto3Storage، باکت در ca-central-1، URLهای امضاشده)، و **Amazon SES** برای ایمیل تراکنشی (بک‌اند django-ses، endpoint رسمی، ca-central-1) — شامل قابلیت ایمیل گروهی ساخته‌شده مستقیماً روی boto3 (URL امضاشده assetها در S3، ابزار ایمیل به همه کاربران).
+- **دیپلوی:** Docker شده (ایمیج Python 3.11 Alpine، entrypoint با migrate + collectstatic)، سرور اپلیکیشن uWSGI، گورنیکورن به‌عنوان گزینه جایگزین WSGI، فشرده‌سازی استاتیک با whitenoise، و ساختار تنظیمات جدا برای پروداکشن.
+- **قابلیت‌های دامنه:** کاتالوگ خدمات (کانال‌کشی، نصب/تعمیر/شستشوی بخاری)، پیش‌فاکتور و پیشنهادها، حساب کاربری سفارشی، فرآیند ایمیل ریست رمز، امتیازدهی خدمات.
+
+---
+
+## تجربه پروداکشن و دواپس
+
+اداره این پلتفرم‌ها، دیپلوی و عملیات را به بخش اصلی کار من تبدیل کرده است، نه یک کار جنبی:
+
+- **داکر در پروداکشن:** استک‌های چندسرویسی Docker Compose (nginx، گورنیکورن/uWSGI، PostgreSQL، Redis، RabbitMQ، کارگر و زمان‌بند Celery، اتوماسیون TLS با certbot) با سیاست ری‌استارت، محدودیت منابع، شبکه داخلی، و volume های نام‌دار.
+- **AWS:** دیپلوی‌های پروداکشن مبتنی بر RDS، S3 (django-storages/boto3) و SES، به‌همراه object storage سازگار با S3 (Google Cloud Storage) برای بکاپ در پروژه‌های دیگر.
+- **مدیریت سرور لینوکس:** بهره‌برداری عملی از سرورهای لینوکس پروداکشن — سرویس‌ها، لاگ‌ها، شبکه، دسترسی‌ها، پروسه‌ها، دیتابیس‌ها و عیب‌یابی رخدادهای زنده.
+- **وب‌سرور و TLS:** کانفیگ nginx به‌عنوان reverse-proxy (upstream، keepalive، gzip، مدیریت درخواست‌های ناخواسته با ۴۴۴، مسیردهی چالش ACME) و چرخه عمر خودکار گواهی Let's Encrypt (شامل اتوماسیون DNS-challenge).
+- **زیرساخت داده و کش:** مدیریت PostgreSQL و مایگریشن‌ها (Alembic در ربات معامله‌گری)، Redis برای کش و رتبه‌بندی، پیام‌رسانی RabbitMQ، Job های زمان‌بندی‌شده با django_celery_beat.
+- **عادت‌های عملیاتی:** رمزها فقط از طریق تنظیمات محیطی (`.env` + pydantic-settings / python-decouple با `.env.example` در هر ریپو)، وابستگی‌های pin شده، بکاپ زمان‌بندی‌شده دیتابیس روی object storage.
+
+---
+
+## سیستم‌های معامله‌گری (پایتون، ۲۰۲۶)
+
+نویسنده ربات معامله‌گری تطبیقی برای صرافی بیت‌پین (~۲۴ هزار خط کد، ~۱۰۰ ماژول) — قوی‌ترین نمایش معماری، مهندسی ریسک و طراحی سیستم در کارهای من:
+
+- **معماری لایه‌ای** — آداپترهای صرافی پاسخ‌های REST را به دیتاکلاس‌های تغییرناپذیر نرمال‌سازی می‌کنند؛ لایه‌های استراتژی، ریسک، persistence و اجرا هرگز با JSON اختصاصی صرافی سروکار ندارند.
+- **موتور استراتژی قابل توضیح** — سیگنال‌های قطعی چند‌تایم‌فریمی (روند EMA، مومنتوم MACD، نوسان ATR، فیلتر حجم) با امتیاز، اطمینان، رژیم بازار و دلیل قابل‌خواندن برای هر مؤلفه.
+- **موتور ریسک** — کلیدهای توقف افت روزانه/ماهانه که در PostgreSQL ذخیره می‌شوند تا ری‌استارت نتواند آن‌ها را ریست کند؛ محاسبات مالی با `Decimal`؛ بلاکرهای سخت که همیشه بر سیگنال اولویت دارند.
 - **کلاینت صرافی** — احراز هویت HMAC با مدیریت چرخه توکن، rate limiting برای هر endpoint، circuit breaker، و اجرای سفارش به‌صورت پیش‌فرض غیرفعال (اول شبیه‌سازی؛ معامله واقعی نیازمند تنظیمات صریح + تأیید ادمین).
-- **ابزارهای پیرامون** — بک‌تست با walk-forward، خط تولید دیتاست ویژگی/برچسب برای یادگیری از معاملات گذشته، و داشبورد فقط‌خواندنی با FastAPI و Jinja2.
+- **ابزارهای پیرامون** — بک‌تست با walk-forward، خط تولید ویژگی/برچسب برای یادگیری از معاملات گذشته، و داشبورد فقط‌خواندنی با FastAPI و Jinja2.
 - **تست‌شده** — ۳۶۹ تست pytest در ۳۷ فایل (fake ها، monkeypatching، fixture های متصل به دیتابیس).
-
-### پلتفرم‌های وب پروداکشن (جنگو · ۲۰۲۳–۲۰۲۶)
-ساخت و نگه‌داری پلتفرم‌های واقعی درآمدزا به‌صورت انفرادی:
-
-- **فروشگاه اینترنتی برای چند برند** — کاتالوگ، سبد خرید سشنی با مدیریت رنگ/وارینت، سفارش‌ها، کد تخفیف، فاکتور PDF و ابزارهای ادمین.
-- **پلتفرم خدمات (Lidoma — تأسیسات HVAC)** — فرآیند رزرو/سفارش، پنل کارکنان، مدل کاربر سفارشی مبتنی بر ایمیل، sitemap/سئو، و خطوط Celery برای ایمیل تراکنشی، بکاپ شبانه `pg_dump` روی Google Cloud Storage، و دریافت نظرات گوگل با کش Redis.
-- **خط تولید محتوا با LLM** — نوشتن خودکار وبلاگ با OpenAI و پرامپت ساختاریافته، پارس JSON، حذف تکرار بر اساس شباهت، و تأمین خودکار تصویر از Pexels.
-- **یکپارچه‌سازی‌های واقعی** — درگاه‌های پرداخت ایرانی (زیبال، پکیج درگاه بانکی، خرید اعتباری ترب با verify/settle/revert)، نوتیفیکیشن SMS.ir، اتوماسیون اینستاگرام، ورود با گوگل، نرخ ارسال پست.
-
-### کتابخانه‌های پایتون بسته‌بندی‌شده
-- **[pexels-python](https://github.com/Stink-Po/pexels-python)** — wrapper تایپ‌شده API پکسلز: اعتبارسنجی ورودی با Pydantic در هر فراخوان، تحلیلگر پاسخ، بسته‌بندی hatchling با ساختار src، و تست اختصاصی.
-- **[boxoffice_api](https://github.com/Stink-Po/boxoffice_api)** — کتابخانه داده‌های باکس‌آفیس: اسکرپ با requests + BeautifulSoup به DataFrame پانداس با همروندی thread-pool، و انتشار خودکار در PyPI با GitHub Actions.
 
 ---
 
@@ -119,17 +175,17 @@ Built and operate real revenue-generating platforms as a solo developer:
 | حوزه | آنچه واقعاً استفاده می‌کنم |
 |---|---|
 | **زبان‌ها** | پایتون (اصلی)، جاوااسکریپت، HTML/CSS/SCSS |
-| **فریم‌ورک‌های وب** | Django 5 (مدل/منیجر کاربر سفارشی، CMS/وبلاگ، سبد خرید، سفارش، ادمین)، FastAPI (app factory، روترها، داشبورد Jinja2) |
-| **داده و ORM** | PostgreSQL، SQLAlchemy 2 + مایگریشن Alembic، Django ORM، Redis، RabbitMQ |
+| **فریم‌ورک‌های وب** | Django 5 (مدل/منیجر کاربر سفارشی، فروشگاه، CMS/وبلاگ، ادمین)، FastAPI (app factory، روترها، داشبورد Jinja2) |
+| **داده و ORM** | PostgreSQL (شامل AWS RDS)، SQLAlchemy 2 + Alembic، Django ORM، Redis، RabbitMQ |
 | **غیرهمزمان و Job ها** | Celery worker ها + زمان‌بندی django_celery_beat |
-| **دواپس و دیپلوی** | استک‌های پروداکشن Docker Compose (TLS با nginx/certbot، گورنیکورن gevent، محدودیت منابع)، مدیریت VPS لینوکس، Google Cloud Storage |
+| **کلود و دواپس** | AWS (RDS، S3، SES) · استک‌های پروداکشن Docker Compose · nginx + TLS با certbot · مدیریت سرور لینوکس (سرویس، لاگ، شبکه، دسترسی‌ها، عیب‌یابی) |
 | **تست** | pytest در مقیاس در ربات معامله‌گری؛ تست در پکیج‌های منتشرشده |
-| **یکپارچه‌سازی‌ها** | درگاه‌های پرداخت (زیبال / درگاه بانکی / ترب)، SMS.ir، اینستاگرام، گوگل (OAuth/نظرات/استوریج)، OpenAI، API های ارسال کالا |
+| **یکپارچه‌سازی‌ها** | درگاه‌های پرداخت (زیبال / درگاه بانکی / ترب)، SMS.ir، اینستاگرام، گوگل (OAuth، نظرات، Cloud Storage)، Amazon SES، OpenAI، پست (PostEx) |
 | **حوزه معامله‌گری** | احراز هویت REST/HMAC صرافی، rate limiting، چرخه حیات سفارش، کنترل ریسک افت سرمایه، بک‌تست، مهندسی ویژگی/برچسب |
 
 ## نحوه کار من
 
-- رمزها فقط در تنظیمات محیطی (`.env` + pydantic-settings / python-decouple)؛ هر ریپو `.env.example` دارد؛ وابستگی‌ها pin شده‌اند.
+- رمزها فقط در تنظیمات محیطی؛ هر ریپو `.env.example` دارد؛ وابستگی‌ها pin شده‌اند.
 - پیش‌فرض‌های ایمن در هر کاری که به پول مربوط است: حالت شبیه‌سازی به‌صورت پیش‌فرض، کلید توقف اصلی، توقف ماندگار افت سرمایه، `Decimal` برای پول، ثبت پوزیشن فقط پس از تأیید fill.
 - توضیح‌پذیری به‌عنوان قابلیت: سیگنال‌ها و تصمیم‌های ریسک دلیلشان را همراه دارند؛ داشبوردها به‌صورت پیش‌فرض فقط‌خواندنی‌اند.
 - جداسازی دامنه: فرمت‌های اختصاصی ارائه‌دهنده فقط در مرز سیستم نرمال‌سازی می‌شوند و به داخل نشت نمی‌کنند.
@@ -144,14 +200,14 @@ Built and operate real revenue-generating platforms as a solo developer:
 
 - **۲۰۲۲** — اولین برنامه‌های پایتون: ابزارهای CLI، مترجم‌ها، اتوماسیون‌های کوچک.
 - **۲۰۲۳** — الگوریتم‌ها و بازی‌ها (هوش مصنوعی minimax برای دوز، pygame)، اولین اپلیکیشن‌های جنگو.
-- **۲۰۲۳–۲۰۲۴** — فروشگاه‌های چندبرندی جنگو در پروداکشن: پرداخت، ارسال، پیامک، کد تخفیف.
+- **۲۰۲۳–۲۰۲۴** — اولین دیپلوی پروداکشن AWS (Winnipeg Furnace: RDS + S3 + SES) و فروشگاه‌های چندبرندی جنگو در پروداکشن.
 - **۲۰۲۵–۲۰۲۶** — پلتفرم‌های پروداکشن با pipeline های Celery/LLM/اینستاگرام، پکیج‌های منتشرشده پایتون، و سیستم معامله‌گری ایمن‌محور با معماری لایه‌ای، کنترل‌های ریسک ماندگار و تست واقعی.
 
-## ریپوهای عمومی منتخب
+## پروژه‌های کوچک‌تر و کتابخانه‌ها
 
-- [pexels-python](https://github.com/Stink-Po/pexels-python) — SDK پکسلز با اعتبارسنجی Pydantic
-- [boxoffice_api](https://github.com/Stink-Po/boxoffice_api) — کتابخانه داده‌های باکس‌آفیس
-- [tictoctoi_with_AI](https://github.com/Stink-Po/tictoctoi_with_AI) — بازی دوز با هوش مصنوعی minimax
+- [pexels-python](https://github.com/Stink-Po/pexels-python) — SDK تایپ‌شده پکسلز: اعتبارسنجی Pydantic در هر فراخوان، بسته‌بندی hatchling، تست اختصاصی.
+- [boxoffice_api](https://github.com/Stink-Po/boxoffice_api) — کتابخانه داده‌های باکس‌آفیس: اسکرپ با BeautifulSoup به DataFrame پانداس، همروندی thread-pool، انتشار PyPI با GitHub Actions.
+- [tictoctoi_with_AI](https://github.com/Stink-Po/tictoctoi_with_AI) — بازی دوز با هوش مصنوعی minimax.
 
 *(پلتفرم‌های پروداکشن و ربات معامله‌گری در ریپوهای خصوصی قرار دارند.)*
 
